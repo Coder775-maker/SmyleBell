@@ -2,10 +2,9 @@ esphome:
   name: doorbell
   platform: ESP32
   board: esp32cam
-  #arduino_version: 1.0.2
 wifi:
-  ssid: "vodafoneA4DFBF"
-  password: "psH4sCR3z3rCHx4G"
+  ssid: "xxxx"
+  password: "xxxx"
   use_address: "192.168.1.103"
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
@@ -23,21 +22,7 @@ api:
 
 ota:
 
-esp32_camera:
-  name: My Camera
-  external_clock:
-    pin: GPIO27
-    frequency: 20MHz
-  i2c_pins:
-    sda: GPIO25
-    scl: GPIO23
-  data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
-  vsync_pin: GPIO22
-  href_pin: GPIO26
-  pixel_clock_pin: GPIO21
-  reset_pin: GPIO15
-  resolution: 640x480
-  jpeg_quality: 10
+
   
 switch:
   - platform: gpio
@@ -61,7 +46,27 @@ binary_sensor:
 
 
   
-
+# Example configuration entry
+esp32_camera:
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  reset_pin: GPIO1
+  # Image settings
+  name: My Camera
+  max_framerate: 20fps
+  idle_framerate: 1fps
+  vertical_flip: true
+  horizontal_mirror: true
+  # ...
 
   
 
