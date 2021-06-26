@@ -1,0 +1,76 @@
+esphome:
+  name: doorbell
+  platform: ESP32
+  board: esp32cam
+  #arduino_version: 1.0.2
+wifi:
+  ssid: "vodafoneA4DFBF"
+  password: "psH4sCR3z3rCHx4G"
+  use_address: "192.168.1.103"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Doorbell Fallback Hotspot"
+    password: "QnPwLSLEdR2Y"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+esp32_camera:
+  name: My Camera
+  external_clock:
+    pin: GPIO27
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO25
+    scl: GPIO23
+  data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
+  vsync_pin: GPIO22
+  href_pin: GPIO26
+  pixel_clock_pin: GPIO21
+  reset_pin: GPIO15
+  resolution: 640x480
+  jpeg_quality: 10
+  
+switch:
+  - platform: gpio
+    pin: 2
+    id: led
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: 14
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Doorbell Button"
+    on_press:
+      then:
+      - switch.turn_on: led
+    on_release:
+      then:
+      - switch.turn_off: led
+
+
+
+  
+
+
+  
+
+  
+  
+  
+
+  
+
+
+
+  
