@@ -41,9 +41,9 @@ Should work then
 */
 #include "home_wifi_multi.h"
 
-char auth[] = "L9yKppEK-YNqdj-rGP7LuYGu9X37Sow2"; 
-char ssid_69[] = "vodafoneA4DFBF";
-char password[] = "psH4sCR3z3rCHx4G";
+char auth[] = ""; 
+char ssid_69[] = "";
+char password[] = "";
 
 OV2640 cam;
 
