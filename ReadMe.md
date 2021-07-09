@@ -33,3 +33,10 @@ read up on chunked http response
 8. Now the plan is to integrate this new code with the Blynk code and test the LED
 9. Then add a push button to send a notification to Blynk and push to live stream
 10. Then we can do a box test and wifi provisioning later
+
+
+UPDATE 09/07/21
+So in the loop part of the code there are 2 pieces of code
+1. Blynk.run();
+2. server.handleClient();
+Now each one is essential for connection or mjpeg stream. They interfere with each other. Now testing one without the other to see if it is affected.
