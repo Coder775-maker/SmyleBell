@@ -17,7 +17,8 @@
 #include <WebServer.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
-const int ledpin = 2;
+//const int ledpin = 2;
+const int buttonpin = 4;
 // Select camera model
 //#define CAMERA_MODEL_WROVER_KIT
 //#define CAMERA_MODEL_ESP_EYE
@@ -41,10 +42,10 @@ Should work then
 */
 #include "home_wifi_multi.h"
 
-char auth[] = ""; 
-char ssid_69[] = "";
-char password[] = "";
-
+char auth[] = "L9yKppEK-YNqdj-rGP7LuYGu9X37Sow2"; 
+char ssid_69[] = "vodafoneA4DFBF";
+char password[] = "psH4sCR3z3rCHx4G";
+int buttonflag = 0;
 OV2640 cam;
 
 WebServer server(80);
@@ -110,12 +111,14 @@ void handleNotFound()
   server.send(200, "text / plain", message);
 }
 
+int buttonstate = 0;
 void setup()
 {
 
   Serial.begin(115200);
   //while (!Serial);            //wait for serial connection.
-  pinMode(ledpin, OUTPUT);
+  //pinMode(ledpin, OUTPUT);
+  pinMode(buttonpin, INPUT);
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -171,14 +174,31 @@ void setup()
   server.on("/jpg", HTTP_GET, handle_jpg);
   server.onNotFound(handleNotFound);
   server.begin();
-  digitalWrite(ledpin, LOW);
+  //digitalWrite(ledpin, LOW);
   Blynk.begin(auth, ssid_69, password);
-  
-
+  Blynk.run();
 }
 
-void loop()
-{
-  //server.handleClient(); // This code to the left allows the web stream to happen. Consider activating this code when the button is pressed. Have a button to disable it as well maybe?
-  Blynk.run();
+/*
+ * 
+ * buttonstate = digitalRead(buttonpin);
+  if (buttonstate == HIGH){
+    
+  }
+    server.handleClient();
+
+ */
+
+
+void loop(){
+  server.handleClient();
+  /*
+  buttonstate = digitalRead(buttonpin);
+  if (buttonstate == HIGH){
+    Blynk.notify("Button has been pressed ");
+    buttonflag = 1;
+  }
+
+ */
+
 }
