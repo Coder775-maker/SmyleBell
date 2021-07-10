@@ -40,3 +40,7 @@ So in the loop part of the code there are 2 pieces of code
 1. Blynk.run();
 2. server.handleClient();
 Now each one is essential for connection or mjpeg stream. They interfere with each other. Now testing one without the other to see if it is affected.
+
+Lots of brownout errors were occuring when we switched the board to a breadboard. Instead we decided to solder the parts together on a circuit board. Stronger connections and no errors now.
+
+Blynk notifications work. Now time to incorporate them with the stream.
