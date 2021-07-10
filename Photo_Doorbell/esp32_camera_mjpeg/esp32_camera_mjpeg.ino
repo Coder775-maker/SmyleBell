@@ -19,24 +19,45 @@
 
 //#define LED 21
 #define BUTTON 4
+#define photo 14
 
-const char* ssid = "user";
-const char* password = "password";
-char auth[] = "auth";
+const char* ssid = "***";
+const char* password = "***";
+char auth[] = "***";
 
 String my_Local_IP;
 
 void startCameraServer();
 
-
+// Used to capture photo.
 void capture()
 {
   //digitalWrite(LED,HIGH);
-  uint32_t number = random(40000000);
-  Blynk.notify("Someone is at the door..");
-  Serial.println("http://"+my_Local_IP+"/capture?_cb="+ (String)number);
-  Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
-  delay(1000);
+    Blynk.notify("Someone is at the door..");
+    uint32_t number = random(40000000);
+    Serial.println("http://"+my_Local_IP+"/capture?_cb="+ (String)number);
+    Blynk.setProperty(V1, "rotation", 90);
+    //Blynk.setProperty(V1, "opacity", 100);
+    //Blynk.setProperty(V1, "scale", 100);
+    Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
+    
+    //delay(1000);
+  
+  
+  //digitalWrite(LED,LOW);
+  
+}
+
+void capture_photo()
+{
+  //digitalWrite(LED,HIGH);
+    //Blynk.notify("Someone is at the door..");
+    uint32_t number = random(40000000);
+    Serial.println("http://"+my_Local_IP+"/capture?_cb="+ (String)number);
+    Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
+    //delay(1000);
+  
+  
   //digitalWrite(LED,LOW);
   
 }
@@ -126,6 +147,11 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   Blynk.run();
-  if(digitalRead(BUTTON) == HIGH)
+  if(digitalRead(BUTTON) == HIGH){
     capture();
+  }
+  if (digitalRead(photo) == HIGH){
+    capture_photo();
+    
+  }
 }
