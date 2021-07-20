@@ -24,9 +24,7 @@
 #define BUTTON 4
 #define photo 14
 
-//const char* ssid = "vodafoneA4DFBF";
-//const char* password = "psH4sCR3z3rCHx4G";
-//char auth[] = "1wjhLDvvS77K39fD9mB4SbW0kS0woZ7k";
+
 
 //Variables
 int i = 0;
