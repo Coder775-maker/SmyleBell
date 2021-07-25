@@ -55,35 +55,17 @@ void startCameraServer(); // dont think we need this
 WebServer server(80);
 
 // Used to capture photo.
-void capture()
+void capture(int buttontype)
 {
-  //digitalWrite(LED,HIGH);
     uint32_t number = random(40000000);
-    Serial.println("Capture");
-    Serial.println("http://"+my_Local_IP+"/capture?_cb="+ (String)number);
-    //Blynk.setProperty(V1, "rotation", 90);
-    //Blynk.setProperty(V1, "opacity", 100);
-    //Blynk.setProperty(V1, "scale", 100);
+    Serial.println("Capture " + buttontype);
     Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
     digitalWrite(GREEN, LOW);
     digitalWrite(BLUE, HIGH);
     digitalWrite(RED, LOW);
-    Blynk.notify("Someone is at the door..");
-    delay(1000);
-    digitalWrite(BLUE, LOW);
-
-}
-
-void capture_photo()
-{
-  //digitalWrite(LED,HIGH);
-    //Blynk.notify("Someone is at the door..");
-    uint32_t number = random(40000000);
-    Serial.println("http://"+my_Local_IP+"/capture?_cb="+ (String)number);
-    Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
-    digitalWrite(GREEN, LOW);
-    digitalWrite(BLUE, HIGH);
-    digitalWrite(RED, LOW);
+    if (buttontype == 1){
+      Blynk.notify("Someone is at the door..");
+    }
     delay(1000);
     digitalWrite(BLUE, LOW);
     
@@ -104,15 +86,19 @@ bool testWifi(void)
     c++;
   }
   Serial.println("");
-  Serial.println("Connect timed out, opening AP");
+  
   return false;
 }
 
 void launchWeb()
 {
   Serial.println("");
-  if (WiFi.status() == WL_CONNECTED)
+  if (WiFi.status() == WL_CONNECTED){
     Serial.println("WiFi connected");
+    digitalWrite(GREEN, HIGH);
+    digitalWrite(RED, LOW);
+    digitalWrite(BLUE, LOW);
+  }
   Serial.print("Local IP: ");
   Serial.println(WiFi.localIP());
   Serial.print("SoftAP IP: ");
@@ -125,6 +111,10 @@ void launchWeb()
 
 void setupAP(void)
 {
+  Serial.println("SetupAP Yellow LED");
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(RED, HIGH);
+  digitalWrite(BLUE, LOW);
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(100);
@@ -236,6 +226,9 @@ void createWebServer()
           Serial.print("Wrote: ");
           Serial.println(qauth[i]);
         }
+        Serial.println("set flagByte 128 to one");
+        EEPROM.write(128, 1);
+        
         EEPROM.commit();
 
         content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
@@ -252,6 +245,7 @@ void createWebServer()
     });
   } 
 }
+
 
 //End of functions
 
@@ -373,18 +367,28 @@ void setup() {
   Serial.print("AUTH: ");
   Serial.println(eauth_array);
 
+  Serial.println("###################### Read byte 128");
+  int flagByte = EEPROM.read(128); 
+  Serial.println(flagByte, DEC);
+  
   WiFi.begin(esid.c_str(), epass.c_str());
   if (testWifi())
   {
     Serial.println("Succesfully Connected!!!");
+    //TODO: Change the colour to white or yellow
     digitalWrite(GREEN, HIGH);
     digitalWrite(RED, LOW);
     digitalWrite(BLUE, LOW);
-    delay(3000);
+    delay(180000);
     digitalWrite(GREEN, LOW);
     //return;
     //delay(100);
     Serial.print(WiFi.localIP());
+  }
+  else if (flagByte == 1){
+    Serial.println("flagByte is one so reset after 180 sec");
+    delay(180000);
+    ESP.restart();
   }
   else
   {
@@ -403,15 +407,6 @@ void setup() {
     server.handleClient();
   }
   // END Wifi provisiong
-  
-  //WiFi.begin(ssid, password);
-
-  //while (WiFi.status() != WL_CONNECTED) {
-    //delay(500);
-    //Serial.print(".");
-  //}
-  //Serial.println("");
-  //Serial.println("WiFi connected");
 
   startCameraServer();
   
@@ -422,21 +417,33 @@ void setup() {
   
   Blynk.begin(eauth_array, esid.c_str(), epass.c_str());
   Blynk.setProperty(V1, "rotation", 90);
+  Serial.println("Ending setup");
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  Serial.println("Calling Blynk Run");
   Blynk.run();
-  if(digitalRead(BUTTON) == HIGH){
-    capture();
-  }
-  if (digitalRead(photo) == HIGH){
-    capture_photo();
-  }
-  if (WiFi.status() == WL_CONNECTED)
-    {
+  Serial.println("Ending Blynk Run");
+  if (WiFi.status() == WL_CONNECTED){
+    if(digitalRead(BUTTON) == HIGH){
+      capture(1);
+    }
+    if (digitalRead(photo) == HIGH){
+      capture(0);
+    }
+    Serial.println("Wifi UP Green LED");
     digitalWrite(GREEN, HIGH);
     digitalWrite(RED, LOW);
     digitalWrite(BLUE, LOW);
-    }
+
+  }
+  else{
+    Serial.println("Wifi Down Red LED");
+    digitalWrite(GREEN, LOW);
+    digitalWrite(RED, HIGH);
+    digitalWrite(BLUE, LOW);
+    delay(5000);
+    ESP.restart();
+  }
 }
