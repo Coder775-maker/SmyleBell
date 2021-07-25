@@ -5,7 +5,12 @@
 #include <WebServer.h>
 #include <EEPROM.h>
 #include <BlynkSimpleEsp32.h>
-//
+
+// RGB LED Pin definitions
+#define RED 14
+#define GREEN 13 
+#define BLUE 12
+
 // WARNING!!! Make sure that you have either selected ESP32 Wrover Module,
 //            or another board which has PSRAM enabled
 //
@@ -60,7 +65,12 @@ void capture()
     //Blynk.setProperty(V1, "opacity", 100);
     //Blynk.setProperty(V1, "scale", 100);
     Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(BLUE, HIGH);
+    digitalWrite(RED, LOW);
     Blynk.notify("Someone is at the door..");
+    delay(1000);
+    digitalWrite(BLUE, LOW);
 
 }
 
@@ -70,7 +80,13 @@ void capture_photo()
     //Blynk.notify("Someone is at the door..");
     uint32_t number = random(40000000);
     Serial.println("http://"+my_Local_IP+"/capture?_cb="+ (String)number);
-    Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);  
+    Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(BLUE, HIGH);
+    digitalWrite(RED, LOW);
+    delay(1000);
+    digitalWrite(BLUE, LOW);
+    
 }
 
 //----------------------------------------------- Fuctions used for WiFi credentials saving and connecting to it which you do not need to change 
@@ -304,8 +320,18 @@ void setup() {
   s->set_hmirror(s, 1);
 #endif
 //Wifi provisiong external code
+// RGB LED Pin setup
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
+  digitalWrite(RED, LOW);
+  digitalWrite(GREEN, LOW);
+  digitalWrite(BLUE, LOW);
 
-  
+  //pinMode(photo, OUTPUT);
+  //digitalWrite(photo, LOW);
+// END OF RBG LED PIN SETUP
+
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
   WiFi.disconnect();
@@ -351,6 +377,11 @@ void setup() {
   if (testWifi())
   {
     Serial.println("Succesfully Connected!!!");
+    digitalWrite(GREEN, HIGH);
+    digitalWrite(RED, LOW);
+    digitalWrite(BLUE, LOW);
+    delay(3000);
+    digitalWrite(GREEN, LOW);
     //return;
     //delay(100);
     Serial.print(WiFi.localIP());
@@ -401,6 +432,11 @@ void loop() {
   }
   if (digitalRead(photo) == HIGH){
     capture_photo();
-    
   }
+  if (WiFi.status() == WL_CONNECTED)
+    {
+    digitalWrite(GREEN, HIGH);
+    digitalWrite(RED, LOW);
+    digitalWrite(BLUE, LOW);
+    }
 }
