@@ -1,3 +1,4 @@
+// Library Imports
 #include "esp_camera.h"
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -6,32 +7,24 @@
 #include <EEPROM.h>
 #include <BlynkSimpleEsp32.h>
 
+
 // RGB LED Pin definitions
 #define RED 14
 #define GREEN 13 
 #define BLUE 12
 
-// WARNING!!! Make sure that you have either selected ESP32 Wrover Module,
-//            or another board which has PSRAM enabled
-//
 
-// Select camera model
-//#define CAMERA_MODEL_WROVER_KIT
-//#define CAMERA_MODEL_ESP_EYE
-//#define CAMERA_MODEL_M5STACK_PSRAM
-//#define CAMERA_MODEL_M5STACK_WIDE
+//Camera model and config file
 #define CAMERA_MODEL_AI_THINKER
-
 #include "camera_pins.h"
 
 
-//#define LED 21
+// Button Pin Definitions
 #define BUTTON 4
 #define photo 14
 
 
-
-//Variables
+//Variables declaration
 int i = 0;
 int statusCode;
 const char* ssid = "text";
@@ -39,22 +32,25 @@ const char* passphrase = "text";
 char auth[] = "text";
 String st;
 String content;
+String my_Local_IP;
 
 
-//Function Decalration
+//Function Declaration
 bool testWifi(void);
 void launchWeb(void);
 void setupAP(void);
 
 
-String my_Local_IP;
-
-void startCameraServer(); // dont think we need this
-
 //Establishing Local server at port 80 whenever required
 WebServer server(80);
 
-// Used to capture photo.
+
+
+
+/* -------------------------------- START OF FUNCTIONS ----------------------------*/
+/* Capture photo function 
+   buttontype = 0 - Button press on Blynk App
+   buttontype = 1 - Button press on doorbell */
 void capture(int buttontype)
 {
     uint32_t number = random(40000000);
@@ -68,17 +64,15 @@ void capture(int buttontype)
     }
     delay(1000);
     digitalWrite(BLUE, LOW);
-    
 }
 
-//----------------------------------------------- Fuctions used for WiFi credentials saving and connecting to it which you do not need to change 
-bool testWifi(void)
-{
+
+// Function to test if WiFi connection has been established
+bool testWifi(void){
   int c = 0;
   Serial.println("Waiting for Wifi to connect");
   while ( c < 20 ) {
-    if (WiFi.status() == WL_CONNECTED)
-    {
+    if (WiFi.status() == WL_CONNECTED){
       return true;
     }
     delay(500);
@@ -90,8 +84,8 @@ bool testWifi(void)
   return false;
 }
 
-void launchWeb()
-{
+// Launch Web server
+void launchWeb(){
   Serial.println("");
   if (WiFi.status() == WL_CONNECTED){
     Serial.println("WiFi connected");
@@ -104,13 +98,13 @@ void launchWeb()
   Serial.print("SoftAP IP: ");
   Serial.println(WiFi.softAPIP());
   createWebServer();
-  // Start the server
+  
   server.begin();
-  Serial.println("Server started");
+  Serial.println("Web Server started");
 }
 
-void setupAP(void)
-{
+// Sets up the Access Point
+void setupAP(void){
   Serial.println("SetupAP Yellow LED");
   digitalWrite(GREEN, HIGH);
   digitalWrite(RED, HIGH);
@@ -119,15 +113,13 @@ void setupAP(void)
   WiFi.disconnect();
   delay(100);
   int n = WiFi.scanNetworks();
-  Serial.println("scan done");
+  
   if (n == 0)
-    Serial.println("no networks found");
-  else
-  {
+    Serial.println("No WiFi Networks found");
+  else{
     Serial.print(n);
-    Serial.println(" networks found");
-    for (int i = 0; i < n; ++i)
-    {
+    Serial.println(" WiFi Networks found");
+    for (int i = 0; i < n; ++i){
       // Print SSID and RSSI for each network found
       Serial.print(i + 1);
       Serial.print(": ");
@@ -161,28 +153,27 @@ void setupAP(void)
   Serial.println("over");
 }
 
-void createWebServer()
-{
+//Creates the Web Server (includes all the HTML)
+void createWebServer(){
  {
     server.on("/", []() {
 
       IPAddress ip = WiFi.softAPIP();
       String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-      content = "<!DOCTYPE HTML>\r\n<html>Hello from ESP32 at ";
+      content = "<!DOCTYPE HTML>\r\n<html>Setup credentials for smartBell at ";
       content += "<form action=\"/scan\" method=\"POST\"><input type=\"submit\" value=\"scan\"></form>";
       content += ipStr;
       content += "<p>";
       content += st;
-      //content += "</p><form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=64><input type='submit'></form>";
       content += "</p><form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><br><br>";
       content += "<label>Password: </label><input name='pass' length=64><br><br>";
-      content += "<label>Auth Token: </label><input name='auth' length=32><br><br>";
+      content += "<label>Blynk Auth Token: </label><input name='auth' length=32><br><br>";
       content += "<input type='submit'></form>";
       content += "</html>";
       server.send(200, "text/html", content);
     });
     server.on("/scan", []() {
-      //setupAP();
+      
       IPAddress ip = WiFi.softAPIP();
       String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
 
@@ -246,6 +237,7 @@ void createWebServer()
   } 
 }
 
+// Blynk Virtual Pin Code for resetting WiFi credentials
   BLYNK_WRITE(V2){
     int vbuttonstate = param.asInt();
     if (vbuttonstate == 1) {
@@ -255,13 +247,12 @@ void createWebServer()
     }
   }
 
+/* -------------------------------- END OF FUNCTIONS -----------------------------------------------*/
 
 
-//End of functions
-
+// Setup, runs only once
 void setup() {
   Serial.begin(115200);
-  //pinMode(LED,OUTPUT);
   Serial.setDebugOutput(true);
   Serial.println();
   
@@ -297,10 +288,10 @@ void setup() {
     config.fb_count = 1;
   }
 
-#if defined(CAMERA_MODEL_ESP_EYE)
-  pinMode(13, INPUT_PULLUP);
-  pinMode(14, INPUT_PULLUP);
-#endif
+  #if defined(CAMERA_MODEL_ESP_EYE)
+    pinMode(13, INPUT_PULLUP);
+    pinMode(14, INPUT_PULLUP);
+  #endif
 
   // camera init
   esp_err_t err = esp_camera_init(&config);
@@ -319,22 +310,18 @@ void setup() {
   //drop down frame size for higher initial frame rate
   s->set_framesize(s, FRAMESIZE_QVGA);
 
-#if defined(CAMERA_MODEL_M5STACK_WIDE)
-  s->set_vflip(s, 1);
-  s->set_hmirror(s, 1);
-#endif
-//Wifi provisiong external code
-// RGB LED Pin setup
+  #if defined(CAMERA_MODEL_M5STACK_WIDE)
+    s->set_vflip(s, 1);
+    s->set_hmirror(s, 1);
+  #endif
+  //Wifi provisiong code
+  // RGB LED Pin setup
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
   pinMode(BLUE, OUTPUT);
   digitalWrite(RED, LOW);
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, LOW);
-
-  //pinMode(photo, OUTPUT);
-  //digitalWrite(photo, LOW);
-// END OF RBG LED PIN SETUP
 
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
@@ -346,9 +333,7 @@ void setup() {
   Serial.println();
   Serial.println("Startup");
 
-  //---------------------------------------- Read eeprom for ssid and pass
   Serial.println("Reading EEPROM ssid");
-
   String esid;
   for (int i = 0; i < 32; ++i)
   {
@@ -357,8 +342,8 @@ void setup() {
   Serial.println();
   Serial.print("SSID: ");
   Serial.println(esid);
+  
   Serial.println("Reading EEPROM pass");
-
   String epass = "";
   for (int i = 32; i < 96; ++i)
   {
@@ -366,6 +351,7 @@ void setup() {
   }
   Serial.print("PASS: ");
   Serial.println(epass);
+  
   Serial.println("Reading EEPROM Auth");
   String eauth;
   for (int i = 96; i < 128; ++i){
@@ -377,22 +363,20 @@ void setup() {
   Serial.print("AUTH: ");
   Serial.println(eauth_array);
 
-  Serial.println("###################### Read byte 128");
+  Serial.println("Read flag byte");
   int flagByte = EEPROM.read(128); 
   Serial.println(flagByte, DEC);
   
   WiFi.begin(esid.c_str(), epass.c_str());
   if (testWifi())
   {
-    Serial.println("Succesfully Connected!!!");
-    //TODO: Change the colour to white or yellow
+    Serial.println("Succesfully Connected to WiFi!!!");
     digitalWrite(GREEN, HIGH);
-    digitalWrite(RED, LOW);
-    digitalWrite(BLUE, LOW);
+    digitalWrite(RED, HIGH);
+    digitalWrite(BLUE, HIGH);
+    /* Delay of 3 mins for WiFi stable connection */
     delay(180000);
     digitalWrite(GREEN, LOW);
-    //return;
-    //delay(100);
     Serial.print(WiFi.localIP());
   }
   else if (flagByte == 1){
@@ -418,7 +402,7 @@ void setup() {
   }
   // END Wifi provisiong
 
-  startCameraServer();
+  
   
   Serial.print("Camera Ready! Use 'http://");
   Serial.print(WiFi.localIP());
@@ -430,11 +414,11 @@ void setup() {
   Serial.println("Ending setup");
 }
 
+
+// repeats inifintely
 void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println("Calling Blynk Run");
   Blynk.run();
-  Serial.println("Ending Blynk Run");
+  
   if (WiFi.status() == WL_CONNECTED){
     if(digitalRead(BUTTON) == HIGH){
       capture(1);
@@ -442,14 +426,12 @@ void loop() {
     if (digitalRead(photo) == HIGH){
       capture(0);
     }
-    Serial.println("Wifi UP Green LED");
+    
     digitalWrite(GREEN, HIGH);
     digitalWrite(RED, LOW);
     digitalWrite(BLUE, LOW);
-
   }
   else{
-    Serial.println("Wifi Down Red LED");
     digitalWrite(GREEN, LOW);
     digitalWrite(RED, HIGH);
     digitalWrite(BLUE, LOW);
