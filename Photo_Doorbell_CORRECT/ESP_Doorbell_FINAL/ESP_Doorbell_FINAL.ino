@@ -15,7 +15,7 @@
 //#define LED 21
 #define BUTTON 4
 #define photo 14
-
+#define resetbuttonpin 15
 //Variables
 int i = 0;
 int statusCode;
@@ -24,7 +24,6 @@ const char* passphrase = "text";
 char auth[] = "text";
 String st;
 String content;
-int resetbuttonpin = 16; 
 //Function Decalration
 bool testWifi(void);
 void launchWeb(void);
@@ -48,6 +47,7 @@ void capture(int buttontype)
     digitalWrite(RED, LOW);
     if (buttontype == 1){
       Blynk.notify("Someone is at the door..");
+      Serial.println("Sent notification");
     }
     delay(1000);
     digitalWrite(BLUE, LOW);
@@ -225,21 +225,10 @@ void createWebServer()
   } 
 }
 
-//Vitual button code for setting byteFlag at 128 eeprom location
-/*
-  BLYNK_WRITE(V2){
-    int vbuttonstate = param.asInt();
-    if (vbuttonstate == 1) {
-      EEPROM.write(128, 0);
-      EEPROM.commit();
-      Serial.println("Flagbyte button pressed");
-      ESP.restart();
-    }
-  }
-  */
 //End of functions
 
 void setup() {
+  
   Serial.begin(115200);
   //pinMode(LED,OUTPUT);
   Serial.setDebugOutput(true);
@@ -311,15 +300,31 @@ void setup() {
   digitalWrite(RED, LOW);
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, LOW);
-  pinMode(resetbuttonpin, INPUT);
+  
   //pinMode(photo, OUTPUT);
   //digitalWrite(photo, LOW);
   // END OF RBG LED PIN SETUP
-
+  // The while loop needs two conditions, a timer of 10 seconds as well as checking if buttonpressed variable is not 1
+  EEPROM.begin(512); //Initialasing EEPROM
+  int z = 0;
+  while (z < 1000){
+    if(digitalRead(resetbuttonpin) == HIGH){
+      EEPROM.write(128, 0);
+      EEPROM.commit();
+      digitalWrite(GREEN, LOW);
+      digitalWrite(RED, HIGH);
+      digitalWrite(BLUE, HIGH);
+      Serial.println("Flagbyte button pressed");
+      ESP.restart();
+    }
+    delay(10);
+    Serial.println("*");
+    z++;
+  }
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
   WiFi.disconnect();
-  EEPROM.begin(512); //Initialasing EEPROM
+
   delay(10);
   //pinMode(LED_BUILTIN, OUTPUT);
   Serial.println();
@@ -377,6 +382,7 @@ void setup() {
       digitalWrite(BLUE, LOW);
       delay(1000);
       x++;
+      Serial.print(x);
     }
     //return;
     //delay(100);
@@ -432,8 +438,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   Blynk.run();
-  int resetbuttonstate = digitalRead(resetbuttonpin);
-    
+  
   if (WiFi.status() == WL_CONNECTED){
     if(digitalRead(BUTTON) == HIGH){
       capture(1);
@@ -444,7 +449,6 @@ void loop() {
     digitalWrite(GREEN, HIGH);
     digitalWrite(RED, LOW);
     digitalWrite(BLUE, LOW);
-
   }
   else{
     Serial.println("Wifi Down Red LED");
@@ -454,12 +458,4 @@ void loop() {
     delay(5000);
     ESP.restart();
   }
-
-  if (resetbuttonstate == HIGH){
-    EEPROM.write(128, 0);
-    EEPROM.commit();
-    Serial.println("Flagbyte button pressed");
-    ESP.restart();
-  }
-  
 }
