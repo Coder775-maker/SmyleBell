@@ -246,6 +246,16 @@ void createWebServer()
   } 
 }
 
+  BLYNK_WRITE(V2){
+    int vbuttonstate = param.asInt();
+    if (vbuttonstate == 1) {
+      EEPROM.write(128, 0);
+      EEPROM.commit();
+      ESP.restart();
+    }
+  }
+
+
 
 //End of functions
 
