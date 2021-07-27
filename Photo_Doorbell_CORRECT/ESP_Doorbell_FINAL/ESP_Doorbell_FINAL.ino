@@ -17,7 +17,6 @@
 #define photo 14
 #define resetbuttonpin 15
 //Variables
-int i = 0;
 int statusCode;
 const char* ssid = "text";
 const char* passphrase = "text";
@@ -30,7 +29,6 @@ void launchWeb(void);
 void setupAP(void);
 String my_Local_IP;
 
-//
 void startCameraServer();
 
 //Establishing Local server at port 80 whenever required
@@ -40,7 +38,7 @@ WebServer server(80);
 void capture(int buttontype)
 {
     uint32_t number = random(40000000);
-    Serial.println("Capture " + buttontype);
+    Serial.println("Capture ");
     Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
     digitalWrite(GREEN, LOW);
     digitalWrite(BLUE, HIGH);
@@ -109,14 +107,12 @@ void setupAP(void)
     Serial.println(" networks found");
     for (int i = 0; i < n; ++i)
     {
-      // Print SSID and RSSI for each network found
       Serial.print(i + 1);
       Serial.print(": ");
       Serial.print(WiFi.SSID(i));
       Serial.print(" (");
       Serial.print(WiFi.RSSI(i));
       Serial.print(")");
-      //Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
       delay(10);
     }
   }
@@ -124,14 +120,12 @@ void setupAP(void)
   st = "<ol>";
   for (int i = 0; i < n; ++i)
   {
-    // Print SSID and RSSI for each network found
     st += "<li>";
     st += WiFi.SSID(i);
     st += " (";
     st += WiFi.RSSI(i);
 
     st += ")";
-    //st += (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*";
     st += "</li>";
   }
   st += "</ol>";
@@ -224,15 +218,11 @@ void createWebServer()
     });
   } 
 }
-
 //End of functions
 
 void setup() {
-  
   Serial.begin(115200);
-  //pinMode(LED,OUTPUT);
   Serial.setDebugOutput(true);
-  Serial.println();
   
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -266,11 +256,6 @@ void setup() {
     config.fb_count = 1;
   }
 
-  #if defined(CAMERA_MODEL_ESP_EYE)
-    pinMode(13, INPUT_PULLUP);
-    pinMode(14, INPUT_PULLUP);
-  #endif
-
   // camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
@@ -288,11 +273,6 @@ void setup() {
   //drop down frame size for higher initial frame rate
   s->set_framesize(s, FRAMESIZE_QVGA);
 
-  #if defined(CAMERA_MODEL_M5STACK_WIDE)
-    s->set_vflip(s, 1);
-    s->set_hmirror(s, 1);
-  #endif
-  //Wifi provisiong external code
   // RGB LED Pin setup
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
@@ -301,30 +281,11 @@ void setup() {
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, LOW);
   
-  //pinMode(photo, OUTPUT);
-  //digitalWrite(photo, LOW);
-  // END OF RBG LED PIN SETUP
-  // The while loop needs two conditions, a timer of 10 seconds as well as checking if buttonpressed variable is not 1
-  EEPROM.begin(512); //Initialasing EEPROM
-  int z = 0;
-  while (z < 1000){
-    if(digitalRead(resetbuttonpin) == HIGH){
-      EEPROM.write(128, 0);
-      EEPROM.commit();
-      digitalWrite(GREEN, LOW);
-      digitalWrite(RED, HIGH);
-      digitalWrite(BLUE, HIGH);
-      Serial.println("Flagbyte button pressed");
-      ESP.restart();
-    }
-    delay(10);
-    Serial.println("*");
-    z++;
-  }
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
   WiFi.disconnect();
-
+  //Initialasing EEPROM
+  EEPROM.begin(512);
   delay(10);
   //pinMode(LED_BUILTIN, OUTPUT);
   Serial.println();
@@ -370,7 +331,6 @@ void setup() {
   if (testWifi())
   {
     Serial.println("Succesfully Connected to WiFi !!!");
-    /* Delay of 3 mins for WiFi reconnection */
     int x = 0;
     while (x < 90){
       digitalWrite(GREEN, HIGH);
@@ -384,13 +344,10 @@ void setup() {
       x++;
       Serial.print(x);
     }
-    //return;
-    //delay(100);
     Serial.print(WiFi.localIP());
   }
   else if (flagByte == 1){
-    Serial.println("flagByte is one so reset after 180 sec");
-    /* Delay of 30 sec for WiFi reconnection */
+    Serial.println("flagByte is one so reset after 30 sec");
     int x = 0;
     while (x < 15){
       digitalWrite(GREEN, HIGH);
@@ -402,6 +359,15 @@ void setup() {
       digitalWrite(BLUE, LOW);
       delay(1000);
       x++;
+      if (digitalRead(resetbuttonpin) == HIGH){
+        Serial.println("flagbyte 1 Reset Button Pressed");
+        delay(500);
+        EEPROM.write(128, 0);
+        EEPROM.commit();
+        delay(500);
+        Serial.println("flagbyte 2 Reset Button Pressed");
+        ESP.restart();
+      }
     }
     ESP.restart();
   }
@@ -436,7 +402,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   Blynk.run();
   
   if (WiFi.status() == WL_CONNECTED){
@@ -449,8 +414,7 @@ void loop() {
     digitalWrite(GREEN, HIGH);
     digitalWrite(RED, LOW);
     digitalWrite(BLUE, LOW);
-  }
-  else{
+  } else {
     Serial.println("Wifi Down Red LED");
     digitalWrite(GREEN, LOW);
     digitalWrite(RED, HIGH);
