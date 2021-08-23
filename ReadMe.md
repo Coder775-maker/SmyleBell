@@ -44,3 +44,16 @@ Now each one is essential for connection or mjpeg stream. They interfere with ea
 Lots of brownout errors were occuring when we switched the board to a breadboard. Instead we decided to solder the parts together on a circuit board. Stronger connections and no errors now.
 
 Blynk notifications work. Now time to incorporate them with the stream.
+
+UPDATE 23/08/21
+The doorbell works now
+When turned on there is a 30 second period where there is no light and during that time the doorbell attempts to connect to the WiFi
+If it the first time it has been turned on then the doorbell after 30 seconds will go into access point mode then once details are entered then a 3 minute wait period hap0pens where the LED blinks. Then after that the LED goes green indicating the doorbell is ready to connect
+
+But if its not the first time then the white blinking LED will happen in a shorter time space. Then the rest conitnue after that (this only happens when there is a working WiFi network)
+
+But if the WiFi network is down then the LED will turn red and after every 30 seconds the doorbell will retry connection
+
+If the WiFI network is down but there is another one which the user would like the doorbell to connect to, then once the doorbell's been turned on, after the 30 second connection time, the user needs to hold the reset button for 3 seconds during the white LED blinking time in order to reopen access point mode and write down wifi credentials
+
+That's all 
