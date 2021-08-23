@@ -16,7 +16,7 @@
 #define BUTTON 4
 #define photo 14
 #define resetbuttonpin 15
-#define pirPin = 2
+#define pirPin 2
 //Variables
 int statusCode;
 const char* ssid = "text";
