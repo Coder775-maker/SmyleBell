@@ -130,7 +130,7 @@ void setupAP(void)
   }
   st += "</ol>";
   delay(100);
-  WiFi.softAP("Smartbell Wi-Fi", "");
+  WiFi.softAP("SmyleBell Wi-Fi", "");
   Serial.println("softap");
   launchWeb();
   Serial.println("over");
