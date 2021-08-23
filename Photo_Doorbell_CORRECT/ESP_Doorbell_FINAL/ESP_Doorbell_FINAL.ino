@@ -16,6 +16,7 @@
 #define BUTTON 4
 #define photo 14
 #define resetbuttonpin 15
+#define pirPin = 2
 //Variables
 int statusCode;
 const char* ssid = "text";
@@ -46,6 +47,10 @@ void capture(int buttontype)
     if (buttontype == 1){
       Blynk.notify("Someone is at the door..");
       Serial.println("Sent notification");
+    }
+    if (buttontype == 2){
+      Blynk.notify("Motion detected!");
+      Serial.println("Sent motion notification");
     }
     delay(1000);
     digitalWrite(BLUE, LOW);
@@ -280,7 +285,8 @@ void setup() {
   digitalWrite(RED, LOW);
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, LOW);
-  
+
+  pinMode(pirPin, INPUT);
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
   WiFi.disconnect();
@@ -410,6 +416,9 @@ void loop() {
     }
     if (digitalRead(photo) == HIGH){
       capture(0);
+    }
+    if (digitalRead(pirPin) == HIGH){
+      capture(2);
     }
     digitalWrite(GREEN, HIGH);
     digitalWrite(RED, LOW);
