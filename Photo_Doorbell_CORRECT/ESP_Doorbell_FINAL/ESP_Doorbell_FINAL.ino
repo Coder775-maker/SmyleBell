@@ -402,7 +402,7 @@ void setup() {
   Blynk.setProperty(V1, "rotation", 90);
   Serial.println("Ending setup");
 }
-
+  
 void loop() {
   Blynk.run();
   
