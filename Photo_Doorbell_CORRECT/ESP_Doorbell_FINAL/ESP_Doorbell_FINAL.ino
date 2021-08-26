@@ -24,6 +24,7 @@ const char* passphrase = "text";
 char auth[] = "text";
 String st;
 String content;
+BlynkTimer btimer;
 //Function Decalration
 bool testWifi(void);
 void launchWeb(void);
@@ -41,16 +42,16 @@ void capture(int buttontype)
     uint32_t number = random(40000000);
     Serial.println("Capture ");
     Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
-    digitalWrite(GREEN, LOW);
-    digitalWrite(BLUE, HIGH);
-    digitalWrite(RED, LOW);
+    //digitalWrite(GREEN, LOW);
+    //digitalWrite(BLUE, HIGH);
+    //digitalWrite(RED, LOW);
     if (buttontype == 1){
       Blynk.notify("Someone is at the door..");
       Serial.println("Sent notification");
     }
     
-    delay(1000);
-    digitalWrite(BLUE, LOW);
+    //delay(1000);
+    //digitalWrite(BLUE, LOW);
 }
 
 //Fuctions used for WiFi credentials saving and connecting to it which you do not need to change 
@@ -400,23 +401,44 @@ void setup() {
   
   Blynk.begin(eauth_array, esid.c_str(), epass.c_str());
   Blynk.setProperty(V1, "rotation", 90);
+  btimer.setInterval(10L, sensorProcess); //timer will run every sec 
   Serial.println("Ending setup");
 }
   
 void loop() {
   Blynk.run();
-  
-  if (WiFi.status() == WL_CONNECTED){
-    if(digitalRead(BUTTON) == HIGH){
-      capture(1);
-    }
-    if (digitalRead(photo) == HIGH){
-      capture(0);
-    }
+  btimer.run();
+}
 
+void sensorProcess(){
+  Serial.println("Inside sensorProcess");
+  if (WiFi.status() == WL_CONNECTED){
+    
+    
+    if(digitalRead(BUTTON) == HIGH){
+      digitalWrite(GREEN, LOW);
+      digitalWrite(BLUE, HIGH);
+      digitalWrite(RED, LOW);
+      delay(1000);
+      uint32_t number = random(40000000);
+      Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
+      Blynk.notify("Someone is at the door..");
+      
+      
+    }
+    else if (digitalRead(photo) == HIGH){
+      digitalWrite(GREEN, LOW);
+      digitalWrite(BLUE, HIGH);
+      digitalWrite(RED, LOW);
+      delay(1000);
+      Serial.println("photo high");
+      uint32_t number = random(40000000);
+      Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
+      
+    }
     digitalWrite(GREEN, HIGH);
-    digitalWrite(RED, LOW);
     digitalWrite(BLUE, LOW);
+    digitalWrite(RED, LOW);
   } else {
     Serial.println("Wifi Down Red LED");
     digitalWrite(GREEN, LOW);
