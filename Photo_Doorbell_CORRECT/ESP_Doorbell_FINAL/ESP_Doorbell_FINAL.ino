@@ -280,9 +280,9 @@ void setup() {
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
   pinMode(BLUE, OUTPUT);
-  digitalWrite(RED, LOW);
-  digitalWrite(GREEN, LOW);
-  digitalWrite(BLUE, LOW);
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(BLUE, HIGH);
 
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
@@ -416,6 +416,8 @@ void sensorProcess(){
     
     
     if(digitalRead(BUTTON) == HIGH){
+      
+      
       digitalWrite(GREEN, LOW);
       digitalWrite(BLUE, HIGH);
       digitalWrite(RED, LOW);
@@ -427,11 +429,13 @@ void sensorProcess(){
       
     }
     else if (digitalRead(photo) == HIGH){
+      
+      Serial.println("photo high");
+      
       digitalWrite(GREEN, LOW);
       digitalWrite(BLUE, HIGH);
       digitalWrite(RED, LOW);
       delay(1000);
-      Serial.println("photo high");
       uint32_t number = random(40000000);
       Blynk.setProperty(V1, "urls", "http://"+my_Local_IP+"/capture?_cb="+(String)number);
       
