@@ -146,7 +146,7 @@ void createWebServer()
 
       IPAddress ip = WiFi.softAPIP();
       String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-      content = "<!DOCTYPE HTML>\r\n<html>Hello from ESP32 at ";
+      content = "<!DOCTYPE HTML>\r\n<html>Hello from SmyleBell at ";
       content += "<form action=\"/scan\" method=\"POST\"><input type=\"submit\" value=\"scan\"></form>";
       content += ipStr;
       content += "<p>";
