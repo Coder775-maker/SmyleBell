@@ -1,6 +1,6 @@
 WhatsApp Message thing:
 
-Hey everyone, I'm Anurag, I live in number 18 and I want to let you know about a product that I've been making over the summer: The SmyleBell.
+Hey everyone, I'm Anurag, I live in 18 Woodridge and I want to let you know about a product that I've been making over the summer: The SmyleBell.
 The SmyleBell is essentially a smart doorbell which is capable of capturing photos of your front door at the click of a button whilst also providing phone notifications.
 The entire motivation behind this product was to improve neighbourhood security. A while back a few burglaries happened which was very concerning so I decided that one way
 to improve neighbourhood security was to create an AFFORDABLE smart doorbell
@@ -14,3 +14,34 @@ Please also see the e-version of our leaflet for more information.
 
 Have a great day everyone!!
 Hope to get into contact with some of you soon!
+
+Points to add:
+
+1. give back to scoiety
+2. Give for free (10 pounds anyways)
+3. If you give more its ultimately going to charitable cause
+
+Place story above product. Meaningful story based on points 1 and 2. Very AFFOPRDABLE and RELIABLE --> Safety --> After GCSAE exam started implementing product 
+
+
+New Message:
+
+
+
+Hey everyone, hope you're all doing well! 
+
+I'm Anurag Chaudhari and I live in 18 Woodridge Way. Today, I would like to introduce a product that I've been making over my GCSE summer holiday: The SmyleBell.
+
+A while back, a couple of burglaries happened around our neighbourhood, which was very concerning and made me and I'm sure others feel very uncomfortable. So, when my GCSE holidays started, I came up with an idea to create a smart doorbell that everyone can afford as I belive security should not come with a hefty price tag.
+
+Using my passion and knowledge about software programming and electronics, I created a very affordable smart doorbell which costs £8, around a 1/10th of other competitors, for the materials and my time. As this is a charitable cause, I am willing to offer the SmyleBell for free if you would like. However, if you do wish to contribute more to my work, this will allow me to prepare more SmyleBells and distribute them to more members of society, whilst also helping charity. All profit made from the SmyleBell will go directly to a charity of your choosing with a proof of donation certificate.
+
+During the next few weeks, when I get some time from my A level studies, I will visit from door to door, giving you a product demonstration of the SmyleBell. 
+
+If you would like more information regarding the awesome features of the SmyleBell please check out the E-Leaflet attached below!
+And if you would like to get in touch, feel free to email: smylebell@gmail.com for any queries.
+
+Have a great day!
+
+
+ 
