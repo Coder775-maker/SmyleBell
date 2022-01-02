@@ -1,24 +1,3 @@
-Install Ubuntu 20.0.4
-Install Oracle Virtual Box
-Install home assistant VMDK
-Configure Virtual Box to get Hassio running
-Access the UI via the IP provided by Hassio's CLI
-Install ESPHOME via Home assistant
-
-Windows:
-Connect to computer and download ESPHOME flasher
-Download setup binary and upload using COM port
-THen OTA (Over the Air) uploads from then on...
-
-Ubuntu:
-Connect to power source
-Upload OTA because previous setup done by Windows
-Code for LED (switch) and Button (binary_sensor)
-  
-
-1.//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-2.//////////////////////////// Above is old attempt see below for 'new' architecture ///////////////////////////////
-3.//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Date: 27/06/2021
 Setup: Ai Thinker ESP32 CAM, Blynk v1, ESP Wrover device setup (Huge App Partition) 
 1. Program ESP32 CAM to connect to Wi-Fi to stream video on http://192.168.1.xxx:81/stream (replace xxx with localIP())
