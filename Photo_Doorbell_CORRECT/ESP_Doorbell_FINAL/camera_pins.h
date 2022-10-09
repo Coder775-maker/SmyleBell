@@ -1,4 +1,4 @@
-
+// Checking to see if github has cloned properly
 #if defined(CAMERA_MODEL_WROVER_KIT)
 #define PWDN_GPIO_NUM    -1
 #define RESET_GPIO_NUM   -1
